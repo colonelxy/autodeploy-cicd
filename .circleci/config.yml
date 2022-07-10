@@ -96,23 +96,44 @@ jobs:
              cd backend
              npm install
              npm test
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-deps
+
       # - notify_on_failure
             
-#   scan-frontend:
-#     docker:
-#       # Docker image here
-#     steps:
-#       # Checkout code from git
-#       # Restore from cache
-#       # Your job code here
+scan-frontend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-deps]
+      - run:
+          name: Frontend Scan
+          command: |
+            cd frontend
+            npm install
+            npm audit fix --force --audit-level=critical 
+            npm audit --audit-level=critical
+      # - notify_on_failure
 
-#   scan-backend:
-#     docker:
-#       # Docker image here
-#     steps:
-#       # Checkout code from git
-#       # Restore from cache
-#       # Your job code here
+  scan-backend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-deps]
+      - run:
+          name: Backend Scan
+          command: |
+            cd backend
+            npm install
+             npm audit fix --force --audit-level=critical
+            npm audit fix --force --audit-level=critical
+            npm audit --audit-level=critical
+      # - notify_on_failure
 
 #   deploy-infrastructure:
 #     docker:
