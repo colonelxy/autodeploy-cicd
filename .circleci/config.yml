@@ -222,6 +222,25 @@ jobs:
       - destroy-environment 
 
 
+  configure-infrastructure:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_awscli
+      - install_ansible
+      - add_ssh_keys:
+          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Configure Server
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment
+
 
 #   configure-infrastructure:
 #     docker:
@@ -383,11 +402,11 @@ workflows:
             - scan-frontend
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [test-feature-branch]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
+          filters:
+            branches:
+              only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
       # - deploy-frontend:
