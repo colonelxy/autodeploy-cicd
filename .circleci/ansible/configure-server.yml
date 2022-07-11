@@ -27,12 +27,8 @@
 
     - name: "install python for Ansible."
       become: yes
-      apt:
-        name: ["python"]
-        state: latest
-        update_cache: yes
-        raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
-        changed_when: false
+      raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
+      changed_when: false
 
   roles:
     - configure-prometheus-node-exporter
