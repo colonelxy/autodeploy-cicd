@@ -13,8 +13,8 @@
 
 - name: "Install PM2 Globally"
   become: yes
-    npm:
-      name: pm2
-      global: yes
-      production: yes
-      state: present
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
