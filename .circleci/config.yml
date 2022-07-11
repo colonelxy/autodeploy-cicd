@@ -213,6 +213,7 @@ jobs:
               --output text)
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
+      
 
       - persist_to_workspace:
           root: ~/
@@ -220,6 +221,7 @@ jobs:
             - project/.circleci/ansible/inventory.txt
       
       - destroy-environment 
+      - notify_on_failure
 
 
   configure-infrastructure:
@@ -240,6 +242,7 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment
+      - notify_on_failure
 
 
   run-migrations:
@@ -262,7 +265,8 @@ jobs:
               curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - destroy-environment
-      - revert-migrations    
+      - revert-migrations  
+      - notify_on_failure  
 
   deploy-frontend:
     docker:
@@ -295,6 +299,7 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
       - revert-migrations
+      - notify_on_failure
 
   deploy-backend:
     docker:
@@ -334,6 +339,7 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
       - revert-migrations 
+      - notify_on_failure
 
 
 
