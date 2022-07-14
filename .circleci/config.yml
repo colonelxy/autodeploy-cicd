@@ -343,6 +343,11 @@ jobs:
       - revert-migrations 
       - notify_on_failure
 
+  pre_tasks:
+    - name: "wait 600 seconds for target connection to become reachable/usable."
+      wait_for_connection:
+        timeout: 20
+
   smoke-test:
     docker:
       - image: amazon/aws-cli
@@ -446,6 +451,8 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
+      - pre_tasks:
+          requires: [deploy-backend, deploy-frontend]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
