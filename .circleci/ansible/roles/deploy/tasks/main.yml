@@ -52,7 +52,7 @@
   apt:
     upgrade: yes
 
----
+
 - name: remove dependencies that are no longer required
   become: yes
   apt:
