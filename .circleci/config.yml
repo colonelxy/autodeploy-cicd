@@ -75,7 +75,7 @@ commands:
             then
               cd ~/project/backend
               npm install
-              npm run migration:reverts
+              npm run migration:revert
             fi
 
 
@@ -267,7 +267,7 @@ jobs:
               curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - destroy-environment
-      # - revert-migrations  
+      - revert-migrations  
       - notify_on_failure  
 
   deploy-frontend:
@@ -300,7 +300,7 @@ jobs:
             npm run build
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
-      # - revert-migrations
+      - revert-migrations
       - notify_on_failure
 
   deploy-backend:
@@ -340,7 +340,7 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
-      # - revert-migrations 
+      - revert-migrations 
       - notify_on_failure
 
   smoke-test:
@@ -355,7 +355,8 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
@@ -367,13 +368,12 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
-            echo ${URL} 
-            if curl -s ${URL} | grep "Welcome"
+            FRONTEND_URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com"            
+            if curl -s $FRONTEND_URL | grep "Welcome"
             then
-              exit 0
-            else
               exit 1
+            else
+              exit 2
             fi 
       - destroy-environment
       - revert-migrations
