@@ -376,7 +376,7 @@ jobs:
             else
               exit 1
             fi 
-      - destroy_environment
+      - destroy-environment
       - revert-migrations
 
 #   smoke-test:
