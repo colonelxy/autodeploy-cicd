@@ -1,36 +1,94 @@
+# ---
+# - name: "Creates backend app directory"
+#   file:
+#     path: ~/backend-app
+#     state: directory
+
+# - name: "Unarchive backend files"
+#   become: True
+#   unarchive:
+#     src: files/artifact.tar.gz
+#     # src: artifact.tar.gz
+#     # dest: ~/backend-app
+#     dest: /home/ubuntu
+
+# - name: "Installing Node Dependencies"
+#   shell: |
+#     cd ~/backend-app
+#     npm i
+
+# # - name: Start app
+# #   become: True
+# #   shell: |
+# #     cd /home/ubuntu
+# #     npm install
+# #     pm2 stop default
+# #     pm2 start npm --start
+
+# - name: "Executing Node app with PM2"
+#   shell: |
+#     cd ~/backend-app/dist
+#     pm2 stop default
+#     pm2 start main.js
+
+#   register: execute_node
+
+# - name: print message
+#   debug:
+#     msg: "{{ execute_node.stdout_lines }}"
+
+# - name: "Configure pm2 to start as service"
+#   become: true
+#   shell: |
+#     env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
+
+- name: "update apt packages."
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: "upgrade packages"
+  become: yes
+  apt:
+    upgrade: yes
+
 ---
-- name: "Creates backend app directory"
+- name: remove dependencies that are no longer required
+  become: yes
+  apt:
+    autoremove: yes
+
+- name: "install dependencies."
+  become: yes
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: "install pm2"
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+- name: Creates directory
   file:
-    path: ~/backend-app
+    path: ~/backend-artifact
     state: directory
 
-- name: "Unarchive backend files"
-  become: True
+- name: "Unarchive"
   unarchive:
-    src: files/artifact.tar.gz
-    # src: artifact.tar.gz
-    # dest: ~/backend-app
-    dest: /home/ubuntu
+    src: artifact.tar.gz
+    dest: ~/backend-artifact
 
-- name: "Installing Node Dependencies"
-  shell: |
-    cd ~/backend-app
-    npm i
-
-- name: Start app
-  become: True
-  shell: |
-    cd /home/ubuntu
-    npm install
-    pm2 stop default
-    pm2 start npm --start
 
 - name: "Executing Node app with PM2"
   shell: |
-    cd ~/backend-app/dist
+    cd ~/backend-artifact/backend/dist
     pm2 stop default
     pm2 start main.js
-
   register: execute_node
 
 - name: print message
