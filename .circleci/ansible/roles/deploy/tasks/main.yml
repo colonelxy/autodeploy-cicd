@@ -5,7 +5,7 @@
     state: directory
 
 - name: "Unarchive backend files"
-  become: True
+  # become: True
   unarchive:
     src: artifact.tar.gz
     dest: ~/backend-app
@@ -32,6 +32,6 @@
     msg: "{{ execute_node.stdout_lines }}"
 
 - name: "Configure pm2 to start as service"
-  become: true
+  # become: true
   shell: |
     env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
