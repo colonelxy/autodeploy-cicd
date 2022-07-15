@@ -429,6 +429,37 @@ jobs:
       - destroy-environment
       - revert-migrations
 
+  cleanup:
+    docker:
+      # Docker image that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - install_awscli
+      - run:
+          name: Get old workflow ID and remove old stacks and files
+          command: |
+            export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/Old_Workflow_ID)
+            echo "Old_Workflow_ID=$Old_Workflow_ID"
+            NEW_WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
+            echo "NEW_WORKFLOW_ID=$NEW_WORKFLOW_ID"
+            if [ -z "$Old_Workflow_ID" ]
+            then
+                echo "No OLD_WORKFLOW_ID found, nothing to cleanup."
+            else
+                if [[ "$NEW_WORKFLOW_ID" != "$Old_Workflow_ID" ]]
+                then
+                    echo "$Old_Workflow_ID!=$NEW_WORKFLOW_ID: the old stack and files are going to be deleted"
+                    aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
+                    aws cloudformation delete-stack --stack-name "udapeople-frontend-${Old_Workflow_ID}"
+                    aws cloudformation delete-stack --stack-name "udapeople-backend-${Old_Workflow_ID}"
+                else
+                    echo "$Old_Workflow_ID==$NEW_WORKFLOW_ID: the old and new stacks are the same, no changes applied"
+                fi
+            fi
+            
+            
+
   notify_on_success:
     docker:
       - image: cimg/base:stable
@@ -474,5 +505,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]
