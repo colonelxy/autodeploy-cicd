@@ -1,96 +1,30 @@
----
-- name: "Creates backend app directory"
-  file:
-    path: ~/backend-app
-    state: directory
-
-- name: "Unarchive backend files"
-  # become: True
-  unarchive:
-    # src: files/artifact.tar.gz
-    src: artifact.tar.gz
-    dest: ~/backend-app
-    # dest: /home/ubuntu
-
-- name: "Installing Node Dependencies"
-  shell: |
-    cd ~/backend-app
-    npm i
-
-# - name: Start app
-#   become: True
-#   shell: |
-#     cd /home/ubuntu
-#     npm install
-#     pm2 stop default
-#     pm2 start npm --start
-
-- name: "Executing Node app with PM2"
-  shell: |
-    cd ~/backend-app/dist
-    pm2 stop default
-    pm2 start main.js
-
-    pm2 save
-
-  register: execute_node
-
-- name: print message
-  debug:
-    msg: "{{ execute_node.stdout_lines }}"
-
-- name: "Configure pm2 to start as service"
-  # become: true
-  shell: |
-    env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
-
-# - name: "update apt packages."
-#   become: yes
-#   apt:
-#     update_cache: yes
-
-# - name: "upgrade packages"
-#   become: yes
-#   apt:
-#     upgrade: yes
-
-
-# - name: remove dependencies that are no longer required
-#   become: yes
-#   apt:
-#     autoremove: yes
-
-# - name: "install dependencies."
-#   become: yes
-#   apt:
-#     name: ["nodejs", "npm"]
-#     state: latest
-#     update_cache: yes
-
-# - name: "install pm2"
-#   become: yes
-#   npm:
-#     name: pm2
-#     global: yes
-#     production: yes
-#     state: present
-
-# - name: Creates directory
+# ---
+# - name: "Creates backend app directory"
 #   file:
-#     path: ~/backend-artifact
+#     path: ~/backend-app
 #     state: directory
 
-# - name: "Unarchive"
+# - name: "Unarchive backend files"
+#   become: True
 #   unarchive:
 #     src: artifact.tar.gz
-#     dest: ~/backend-artifact
+#     dest: ~/backend-app
+    
+
+# - name: "Installing Node Dependencies"
+#   shell: |
+#     cd ~/backend-app
+#     npm i
 
 
 # - name: "Executing Node app with PM2"
 #   shell: |
-#     cd ~/backend-artifact/backend/dist
+#     cd ~/backend-app/dist
 #     pm2 stop default
 #     pm2 start main.js
+
+#     pm2 save
+
 #   register: execute_node
 
 # - name: print message
@@ -101,3 +35,35 @@
 #   become: true
 #   shell: |
 #     env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
+
+
+
+---
+  - name: Copy files
+    become: true
+    copy:
+      src: /root/project/artifact.tar.gz
+      dest: /home/ubuntu/artifact.tar.gz
+  - name: Unarchive
+    become: true
+    shell : |
+        cd /home/ubuntu/
+        tar xvzf artifact.tar.gz -C .
+  - name: "run server"
+    become: true
+    shell : |
+        cd /home/ubuntu/
+        npm install
+        pm2 stop default
+        pm2 start npm -- start
+    environment:
+      ENVIRONMENT: production
+      TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
+      TYPEORM_MIGRATIONS_DIR: "./migrations"
+      TYPEORM_MIGRATIONS: "./migrations/*.js"
+      TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
+      TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
+      TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
+      TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
+      TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+      TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
