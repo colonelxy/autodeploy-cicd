@@ -423,6 +423,9 @@ jobs:
               --template-file .circleci/files/cloudfront.yml \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --stack-name InitialStack
+
+            echo "Old Wokflow ID: ${OLD_WORKFLOW_ID}"
+            echo "Current Wokflow ID: ${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment
       - revert-migrations
 
