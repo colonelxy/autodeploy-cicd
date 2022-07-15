@@ -5,7 +5,7 @@
     state: directory
 
 - name: "Unarchive backend files"
-  become: True
+  # become: True
   unarchive:
     # src: files/artifact.tar.gz
     src: artifact.tar.gz
@@ -30,6 +30,8 @@
     cd ~/backend-app/dist
     pm2 stop default
     pm2 start main.js
+
+    pm2 save
 
   register: execute_node
 
