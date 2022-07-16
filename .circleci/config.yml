@@ -335,18 +335,6 @@ jobs:
             cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
       - run:
           name: Deploy backend
-          # command: |
-          #   cd backend
-          #   npm i
-          #   npm run build
-          #   cd ..
-          #   tar -C backend -czvf artifact.tar.gz .
-          #   mkdir -p ~/project/.circleci/ansible/roles/deploy/files
-          #   cp artifact.tar.gz .circleci/ansible/roles/deploy/files
-          #   cd .circleci/ansible
-          #   echo "Contents of the inventory.txt file is ---"
-          #   cat inventory.txt
-          #   ansible-playbook -i inventory.txt deploy-backend.yml
           command: |  
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is ---"
@@ -431,7 +419,6 @@ jobs:
 
   cleanup:
     docker:
-      # Docker image that supports AWS CLI
       - image: amazon/aws-cli
     steps:
       - checkout
