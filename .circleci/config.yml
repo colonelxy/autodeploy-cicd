@@ -302,6 +302,7 @@ jobs:
           name: Deploy frontend objects
           command: |
             cd frontend
+            npm install typescript@rc
             npm run build
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
@@ -408,7 +409,7 @@ jobs:
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             printf '%s\n' "${STACKS[@]}"
             aws cloudformation deploy \
-              --template-file .circleci/cloudformation/cloudfront.yml \
+              --template-file .circleci/files/cloudfront.yml \
               --parameter-overrides ID="prod-${CIRCLE_WORKFLOW_ID:0:7}" \
               --stack-name udapeople-prod-cloudfront
             if printf '%s\n' "${STACKS[@]}" | grep -q "$OLD_WORKFLOW_ID"; then
