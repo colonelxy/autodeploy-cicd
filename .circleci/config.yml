@@ -304,7 +304,7 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
       - revert-migrations
-      - notify_on_failure
+     
 
   deploy-backend:
     docker:
@@ -336,21 +336,18 @@ jobs:
       - run:
           name: Deploy backend
           command: |  
+            export TYPEORM_MIGRATIONS_DIR='./migrations'
+            export TYPEORM_ENTITIES='./modules/domain/**/*.entity{.ts,.js}'
+            export TYPEORM_MIGRATIONS='./migrations/*.ts ' 
+            
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is ---"
             cat inventory.txt
-
-            export TYPEORM_MIGRATIONS_DIR='./migrations'
-            export TYPEORM_ENTITIES='./modules/domain/**/*.entity{.ts,.js}'
-            export TYPEORM_MIGRATIONS='./migrations/*.ts '  
-
-                
-            
             ansible-playbook -i inventory.txt deploy-backend.yml 
           
       - destroy-environment
       - revert-migrations 
-      - notify_on_failure
+     
 
 
   smoke-test:
