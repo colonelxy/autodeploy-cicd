@@ -410,7 +410,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --stack-name FinalStack
+              --stack-name InitialStack
             if printf '%s\n' "${STACKS[@]}" | grep -q "$OLD_WORKFLOW_ID"; then
               echo "Removing previous stack"
             #   aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
