@@ -302,7 +302,6 @@ jobs:
           name: Deploy frontend objects
           command: |
             cd frontend
-            npm install typescript@rc
             npm run build
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
