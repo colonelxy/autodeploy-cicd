@@ -40,10 +40,10 @@
 #     name: pm2
 #     global: yes
 
-- name: "install pm2"
-  become: true
+- name: "install pm2 Globally"
+  # become: true
   npm:
     name: pm2
     global: yes
     production: yes
-    state: present
+    # state: present
