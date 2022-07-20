@@ -1,9 +1,9 @@
  1. https://github.com/colonelxy/project3  -URL01
 
-  2. http://udapeople-d88936c.s3-website-us-east-1.amazonaws.com/#/employees/new-[URL02]
+  2. s3-[URL02]
 
-  3. https://d1qlzb8hhl94u.cloudfront.net/#/employees/new -[URL03]
+  3. cfr -[URL03]
 
-  4. ec2-44-209-73-67.compute-1.amazonaws.com -[URL04]
+  4. backend ec2 -[URL04]
 
-  5. http://ec2-54-226-221-51.compute-1.amazonaws.com:9090 -[URL05]
+  5. http://ec2-54-82-20-3.compute-1.amazonaws.com:9090/targets?search= -[URL05]
