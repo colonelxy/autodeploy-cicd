@@ -76,7 +76,8 @@ commands:
             SUCCESS=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
             if (( $SUCCESS == 1 )); 
             then
-              cd ~/project/backend
+              cd backend
+              # cd ~/project/backend
               npm install
               npm run migration:revert
             fi
@@ -221,7 +222,7 @@ jobs:
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
 
-      - run: yum -y install tar gzip
+    
 
       - persist_to_workspace:
           root: ~/
