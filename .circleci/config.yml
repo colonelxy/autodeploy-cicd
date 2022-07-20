@@ -454,7 +454,7 @@ jobs:
             echo Old Workflow ID: $Old_Workflow_ID 
             # Fetch the stack names 
             Current_Workflow_ID=${CIRCLE_WORKFLOW_ID:0:7}
-            echo "Current Wokflow ID: $Current_Workflow_ID
+            echo Current Wokflow ID: $Current_Workflow_ID
             
             if [[ "$Current_Workflow_ID" != "$Old_Workflow_ID" ]]
                 then
