@@ -65,7 +65,7 @@ commands:
 
             sudo npm install -g n
             sudo n 13.8.0
-            
+
   destroy_environment:
     steps:
       - run:
@@ -427,6 +427,15 @@ jobs:
               echo cant clean
             fi
 
+  notify_on_success:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - slack/notify:
+          event: pass
+          channel: cicd_pipeline
+          template: success_target_deployment_1 
+          
 workflows:
   my-workflow:
     jobs:
