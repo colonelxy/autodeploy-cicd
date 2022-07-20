@@ -22,6 +22,50 @@ commands:
               npm install
               npm run migration:revert
             fi
+  
+  notify_on_failure:
+    steps:
+      - slack/notify:
+          event: fail
+          channel: cicd_pipeline
+          template: basic_fail_1
+
+  install_awscli:
+    description: Install AWS CLI v2
+    steps:
+      - run:
+          name: Install AWS CLI v2
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install 
+
+  install_ansible:
+    description: Install AWS ansible
+    steps:
+      - run:
+          name: Install AWS ansible
+          command: |
+            sudo apt update
+            sudo apt install -y python3 python3-pip
+            python3 -m pip install --user ansible
+
+            # software-properties-common -y
+            # sudo add-apt-repository --yes --update ppa:ansible/ansible
+            # sudo apt install ansible -y  
+
+  install_nodejs:
+    description: Install Node.js 13
+    steps:
+      - run:
+          name: Install Node.js 13
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+            sudo apt install -y nodejs
+
+            sudo npm install -g n
+            sudo n 13.8.0
+            
   destroy_environment:
     steps:
       - run:
@@ -396,6 +440,12 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
+      - notify_on_success:
+          requires:
+            - test-frontend
+            - test-backend
+            - scan-backend
+            - scan-frontend
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
