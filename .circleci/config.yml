@@ -14,7 +14,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/JBatMEU1HHtfKNevgH6ypU/migration_<< parameters.Workflow_ID >>)
+            SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
@@ -257,31 +257,37 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.11
+    #   - image: python:3.7-alpine3.11
+    # steps:
+    #   - checkout
+    #   - run:
+    #       name: Install dependencies
+    #       command: |
+    #         apk add --update tar gzip curl nodejs npm ansible
+    #         #apk add --no-cache python3 py3-pip 
+    #         #pip3 install --upgrade pip 
+    #         #pip3 install --no-cache-dir awscli 
+    #         #rm -rf /var/cache/apk/*
+
+      - image: cimg/base:stable
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update tar gzip curl nodejs npm ansible
-            #apk add --no-cache python3 py3-pip 
-            #pip3 install --upgrade pip 
-            #pip3 install --no-cache-dir awscli 
-            #rm -rf /var/cache/apk/*
+      - install_awscli
+      - install_ansible
+      - install_nodejs
+
+      - add_ssh_keys:
+          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
       - attach_workspace:
           at: ~/
       - restore_cache:
           keys: [backend-build]
-      - add_ssh_keys:
-          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
       - run:
           name: Deploy backend
           command: |
             cd backend
             npm install
             npm run build
-            #tar -czvf artifact.tar.gz dist
-            #cp artifact.tar.gz .circleci/ansible/roles/deploy/files
             cd ..
             # Zip the directory
             tar -czvf artifact.tar.gz backend
