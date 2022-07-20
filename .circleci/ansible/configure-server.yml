@@ -1,7 +1,7 @@
 ---
 
 - name: "configure Playbook." 
-  hosts: all
+  hosts: web
   user: ubuntu
   become: true
   become_method: sudo
