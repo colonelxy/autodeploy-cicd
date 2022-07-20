@@ -539,7 +539,7 @@ workflows:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
-              only: [dev]
+              only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run_db_migrations:
