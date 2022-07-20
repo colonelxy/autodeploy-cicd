@@ -453,24 +453,33 @@ jobs:
             export Old_Workflow_ID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_id)
             echo Old Workflow ID: $Old_Workflow_ID 
             # Fetch the stack names 
-
-            echo "Old Workflow ID=$Old_Workflow_ID"
             Current_Workflow_ID=${CIRCLE_WORKFLOW_ID:0:7}
-            echo "Current Wokflow ID=$Current_Workflow_ID
-            if [ -z "$Old_Workflow_ID" ]
-            then
-                echo "No Old Workflow ID found, nothing to cleanup."
-            else
-                if [[ "$Current_Workflow_ID" != "$Old_Workflow_ID" ]]
+            echo "Current Wokflow ID: $Current_Workflow_ID
+            
+            if [[ "$Current_Workflow_ID" != "$Old_Workflow_ID" ]]
                 then
-                    echo "$Old_Workflow_ID!=$Current_Workflow_ID: the old stack and files are going to be deleted"
+                    echo "$Old_Workflow_ID != $Current_Workflow_ID: the old stack and files are going to be deleted"
                     aws s3 rm "s3://udapeople-${Old_Workflow_ID}" --recursive
                     aws cloudformation delete-stack --stack-name "udapeople-frontend-${Old_Workflow_ID}"
                     aws cloudformation delete-stack --stack-name "udapeople-backend-${Old_Workflow_ID}"
-                else
-                    echo "$Old_Workflow_ID==$Current_Workflow_ID: the old and new stacks are the same, no changes applied"
-                fi
-            fi
+                    
+                else [ "$Current_Workflow_ID" == "$Old_Workflow_ID" ]
+                    echo "The old and new stacks are the same, no changes applied"
+
+                    
+            # then
+            #     echo "No Old Workflow ID found, nothing to cleanup."
+            # else
+            #     if [[ "$Current_Workflow_ID" != "$Old_Workflow_ID" ]]
+            #     then
+            #         echo "$Old_Workflow_ID != $Current_Workflow_ID: the old stack and files are going to be deleted"
+            #         aws s3 rm "s3://udapeople-${Old_Workflow_ID}" --recursive
+            #         aws cloudformation delete-stack --stack-name "udapeople-frontend-${Old_Workflow_ID}"
+            #         aws cloudformation delete-stack --stack-name "udapeople-backend-${Old_Workflow_ID}"
+            #     else
+            #         echo "$Old_Workflow_ID==$Current_Workflow_ID: the old and new stacks are the same, no changes applied"
+            #     fi
+            # fi
 
 
             # export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
