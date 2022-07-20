@@ -249,9 +249,11 @@ jobs:
           command: |
             cd .circleci/ansible
             cat inventory.txt
+
             ansible-playbook -i inventory.txt configure-server.yml
+
       - destroy-environment
-      - notify_on_failure
+      
 
 
   run_db_migrations:
@@ -271,7 +273,7 @@ jobs:
           name: Send migration status to kvdb.io
           command: |
             cd backend
-            if grep -q "has been executed successfully." ./src/migrations_dump.txt
+            if grep -q "has been executed successfully." ./migrations_dump.txt
             then
               curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
