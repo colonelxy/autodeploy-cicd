@@ -465,8 +465,9 @@ jobs:
                     
                 else [ "$Current_Workflow_ID" == "$Old_Workflow_ID" ]
                     echo "The old and new stacks are the same, no changes applied"
+            fi
 
-                    
+
             # then
             #     echo "No Old Workflow ID found, nothing to cleanup."
             # else
