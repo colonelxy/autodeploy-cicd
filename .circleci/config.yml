@@ -146,7 +146,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
+              --parameter-overrides WORKFLOWID="${CIRCLE_WORKFLOW_ID:0:7}" 
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -214,8 +214,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." migrations_dump.txt
             then
-              # If you are using kvdb.io, generate the bucket ID "JBatMEU1HHtfKNevgH6ypU" in your local terminal first
-              curl -d '1' https://kvdb.io/JBatMEU1HHtfKNevgH6ypU/migration_${CIRCLE_WORKFLOW_ID:0:7}  
+              curl -d '1' https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  
             fi
       - revert-migrations
       - destroy_environment
