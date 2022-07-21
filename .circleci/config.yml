@@ -349,9 +349,9 @@ jobs:
             # Zip the directory
             tar -czvf artifact.tar.gz backend
             cp artifact.tar.gz .circleci/ansible/roles/deploy/files
-            export TYPEORM_MIGRATIONS_DIR=./migrations
-            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
-            export TYPEORM_MIGRATIONS=./migrations/*.ts
+            export TYPEORM_MIGRATIONS_DIR=./dist/migrations
+            export TYPEORM_ENTITIES=./dist/modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./dist/migrations/*.ts
             cd .circleci/ansible
             echo "Contents  of the inventory file is -------"
             cat inventory.txt
@@ -376,7 +376,7 @@ jobs:
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
-                exit 1
+                exit 0
             else
                 exit 1
             fi
