@@ -414,7 +414,7 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-            yum install -y curl 
+            
             export Old_Workflow_ID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/previous_id)
             echo Old Workflow ID: $Old_Workflow_ID 
  
