@@ -155,9 +155,10 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm install oauth-sign@^0.9.0
-            npm audit fix --audit-level=critical
-            #npm audit --audit-level=critical
+            # npm install oauth-sign@^0.9.0
+            npm audit fix --force --audit-level=critical
+            # npm audit fix --audit-level=critical
+            npm audit --audit-level=critical
       - slack/notify:
           channel: cicd3
           event: fail
@@ -375,7 +376,7 @@ jobs:
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
-                exit 0
+                exit 1
             else
                 exit 1
             fi
