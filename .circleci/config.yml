@@ -216,7 +216,7 @@ jobs:
             echo "[all]" >> .circleci/ansible/inventory.txt
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
-            
+
             # yum install -y tar gzip
             # echo [all] > ~/inventory
             # aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> ~/inventory
@@ -323,17 +323,7 @@ jobs:
 
   deploy-backend:
     docker:
-    #   - image: python:3.7-alpine3.11
-    # steps:
-    #   - checkout
-    #   - run:
-    #       name: Install dependencies
-    #       command: |
-    #         apk add --update tar gzip curl nodejs npm ansible
-    #         #apk add --no-cache python3 py3-pip 
-    #         #pip3 install --upgrade pip 
-    #         #pip3 install --no-cache-dir awscli 
-    #         #rm -rf /var/cache/apk/*
+
 
       - image: cimg/base:stable
     steps:
@@ -380,6 +370,7 @@ jobs:
           name: Backend smoke test.
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
@@ -449,24 +440,6 @@ jobs:
                     echo "The old and new stacks are the same, no changes applied"
             fi
 
-          
-          # command: |
-          #   yum install -y curl         
-          #   export OLDWORKFLOWID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id-2)
-          #   echo Old Workflow ID: $OLDWORKFLOWID 
-          #   # Fetch the stack names 
-          #   export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-          #   --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-          #   echo Stack names: "${STACKS[@]}"          
-          #   if [[ "${STACKS[@]}" =~ ${OLDWORKFLOWID} ]]
-          #   then
-          #     aws s3 rm "s3://udapeople-${OLDWORKFLOWID}" --recursive
-          #     aws cloudformation delete-stack --stack-name "udapeople-backend-${OLDWORKFLOWID}"
-          #     aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLDWORKFLOWID}"
-          #     echo cleaning confirmed
-          #   else
-          #     echo cant clean
-          #   fi
 
   notify_on_success:
     docker:
