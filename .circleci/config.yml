@@ -410,22 +410,42 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-            yum install -y curl         
-            export OLDWORKFLOWID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id-2)
-            echo Old Workflow ID: $OLDWORKFLOWID 
+            yum install -y curl 
+            export Old_Workflow_ID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/previous_id)
+            echo Old Workflow ID: $Old_Workflow_ID 
             # Fetch the stack names 
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}"          
-            if [[ "${STACKS[@]}" =~ ${OLDWORKFLOWID} ]]
-            then
-              aws s3 rm "s3://udapeople-${OLDWORKFLOWID}" --recursive
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OLDWORKFLOWID}"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLDWORKFLOWID}"
-              echo cleaning confirmed
-            else
-              echo cant clean
+            Current_Workflow_ID=${CIRCLE_WORKFLOW_ID:0:7}
+            echo Current Wokflow ID: $Current_Workflow_ID
+            
+            if [[ "$Current_Workflow_ID" != "$Old_Workflow_ID" ]]
+                then
+                    echo "$Old_Workflow_ID != $Current_Workflow_ID: the old stack and files are going to be deleted"
+                    aws s3 rm "s3://udapeople-${Old_Workflow_ID}" --recursive
+                    aws cloudformation delete-stack --stack-name "udapeople-frontend-${Old_Workflow_ID}"
+                    aws cloudformation delete-stack --stack-name "udapeople-backend-${Old_Workflow_ID}" 
+                    echo "----------Delete Confirmed!---------"
+                else [ "$Current_Workflow_ID" == "$Old_Workflow_ID" ]
+                    echo "The old and new stacks are the same, no changes applied"
             fi
+
+          
+          # command: |
+          #   yum install -y curl         
+          #   export OLDWORKFLOWID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id-2)
+          #   echo Old Workflow ID: $OLDWORKFLOWID 
+          #   # Fetch the stack names 
+          #   export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+          #   --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+          #   echo Stack names: "${STACKS[@]}"          
+          #   if [[ "${STACKS[@]}" =~ ${OLDWORKFLOWID} ]]
+          #   then
+          #     aws s3 rm "s3://udapeople-${OLDWORKFLOWID}" --recursive
+          #     aws cloudformation delete-stack --stack-name "udapeople-backend-${OLDWORKFLOWID}"
+          #     aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLDWORKFLOWID}"
+          #     echo cleaning confirmed
+          #   else
+          #     echo cant clean
+          #   fi
 
   notify_on_success:
     docker:
@@ -435,7 +455,7 @@ jobs:
           event: pass
           channel: cicd_pipeline
           template: success_target_deployment_1 
-          
+
 workflows:
   my-workflow:
     jobs:
