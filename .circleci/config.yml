@@ -262,6 +262,7 @@ jobs:
             if grep -q "has been executed successfully." migrations_dump.txt
             then
               curl -d '1' https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  
+              echo "Results sent to KVDB"
             fi
       - revert-migrations
       - destroy_environment
