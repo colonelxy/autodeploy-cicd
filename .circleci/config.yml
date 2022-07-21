@@ -210,7 +210,8 @@ jobs:
             aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> ~/inventory
       - persist_to_workspace:
           root: ~/
-          paths: inventory
+          paths: 
+            - project/.circleci/ansible/inventory.txt
       - destroy_environment
 
   configure-infrastructure:
@@ -230,7 +231,8 @@ jobs:
       - run:
           name: Configure server
           command: |
-            ansible-playbook .circleci/ansible/configure-server.yml -i ~/inventory
+            cd .circleci/ansible/configure-server.yml -i ~/inventory.txt
+            cat inventory.txt
       - destroy_environment
 
   run-migrations:
@@ -346,8 +348,8 @@ jobs:
             export TYPEORM_MIGRATIONS=./migrations/*.ts
             cd .circleci/ansible
             echo "Contents  of the inventory file is -------"
-            cat ~/inventory
-            ansible-playbook -i ~/inventory deploy-backend.yml
+            cat ~/inventory.txt
+            ansible-playbook -i ~/inventory.txt deploy-backend.yml
       - destroy_environment   
       - revert-migrations 
   smoke-test:
