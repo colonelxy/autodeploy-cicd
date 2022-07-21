@@ -460,7 +460,7 @@ jobs:
           template: success_target_deployment_1 
 
 
-my-workflow:
+Workflows:
   jobs:
     - build-frontend
     - build-backend
