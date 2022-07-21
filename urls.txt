@@ -1,9 +1,14 @@
- 1. https://github.com/colonelxy/project3  -URL01
+ 1. Github
+https://github.com/colonelxy/project3  -URL01
 
-  2. s3-[URL02]
+  2. S3 upblic bucket
+http://udapeople-c160f77.s3-website-us-east-1.amazonaws.com-[URL02]
 
-  3. cfr -[URL03]
+  3. Cloudfront
+https://dnfo694trbpe0.cloudfront.net -[URL03]
 
-  4. backend ec2 -[URL04]
+  4. Backend Instance Status
+http://34.199.130.79:3030/api/status -[URL04]
 
-  5. http://ec2-54-82-20-3.compute-1.amazonaws.com:9090/targets?search= -[URL05]
+  5. Prometheus server
+http://ec2-54-242-67-129.compute-1.amazonaws.com:9090/targets?search= -[URL05]
