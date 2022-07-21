@@ -14,12 +14,7 @@
   apt:
     autoremove: yes
 
-- name: "install dependencies."
-  become: yes
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
+
 
 - name: "install pm2"
   become: yes
@@ -39,12 +34,17 @@
     src: artifact.tar.gz
     dest: ~/backend-artifact
 
+- name: "install dependencies."
+  shell: |
+    cd ~/backend-artifact
+    npm i
 
 - name: "Executing Node app with PM2"
   shell: |
-    cd ~/backend-artifact/backend/dist
+    cd ~/backend-artifact/dist
     pm2 stop default
     pm2 start main.js
+    pm2 save
   register: execute_node
 
 - name: print message
