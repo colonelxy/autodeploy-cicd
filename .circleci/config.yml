@@ -179,7 +179,7 @@ jobs:
             #npm install oauth-sign@^0.9.0
             npm audit fix --force --audit-level=critical
             npm audit fix --force --audit-level=critical
-            #npm audit --audit-level=critical
+            npm audit --audit-level=critical
       - notify_on_failure
 
   deploy-infrastructure:
@@ -353,8 +353,8 @@ jobs:
             export TYPEORM_MIGRATIONS=./migrations/*.ts
             cd .circleci/ansible
             echo "Contents  of the inventory file is -------"
-            cat ~/inventory.txt
-            ansible-playbook -i ~/inventory.txt deploy-backend.yml
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy_environment   
       - revert-migrations 
   smoke-test:
