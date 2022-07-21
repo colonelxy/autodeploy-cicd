@@ -411,6 +411,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run: apt-get update && apt-get install -y openssh-client git
       - run:
           name: Remove old stacks and files
           command: |
