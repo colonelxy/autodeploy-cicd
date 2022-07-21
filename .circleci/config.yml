@@ -93,6 +93,7 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
+      - notify_on_failure
 
   build-backend:
     docker:
@@ -110,6 +111,7 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+      - notify_on_failure
 
   test-frontend:
     docker:
@@ -124,7 +126,8 @@ jobs:
             cd frontend
             npm install
             npm run test
-                
+      - notify_on_failure
+
   test-backend:
     docker:
       - image: cimg/node:13.8.0
@@ -138,6 +141,7 @@ jobs:
             cd backend
             npm install
             npm run test
+      - notify_on_failure
 
   scan-frontend:
     docker:
@@ -155,9 +159,10 @@ jobs:
             npm audit fix --audit-level=critical
             #npm audit --audit-level=critical
       - slack/notify:
-          channel: C03NZHBJAGG
+          channel: cicd3
           event: fail
           template: basic_fail_1
+      - notify_on_failure
 
   scan-backend:
     docker:
@@ -175,10 +180,7 @@ jobs:
             npm audit fix --force --audit-level=critical
             npm audit fix --force --audit-level=critical
             #npm audit --audit-level=critical
-      - slack/notify:
-          channel: C03NZHBJAGG
-          event: fail
-          template: basic_fail_1
+      - notify_on_failure
 
   deploy-infrastructure:
     docker:
@@ -213,6 +215,7 @@ jobs:
           paths: 
             - project/.circleci/ansible/inventory.txt
       - destroy_environment
+      - notify_on_failure
 
   configure-infrastructure:
     docker:
@@ -231,8 +234,10 @@ jobs:
       - run:
           name: Configure server
           command: |
-            cd .circleci/ansible/configure-server.yml -i ~/inventory.txt
+            cd .circleci/ansible
             cat inventory.txt
+
+            ansible-playbook -i inventory.txt configure-server.yml
       - destroy_environment
 
   run-migrations:
