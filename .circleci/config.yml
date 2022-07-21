@@ -28,7 +28,7 @@ commands:
     steps:
       - slack/notify:
           event: fail
-          channel: cicd_pipeline
+          channel: cicd3
           template: basic_fail_1
 
   install_awscli:
@@ -411,7 +411,6 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: sudo apt-get update && apt-get install -y openssh-client git
       - run:
           name: Remove old stacks and files
           command: |
