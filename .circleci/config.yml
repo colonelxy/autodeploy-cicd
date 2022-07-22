@@ -329,74 +329,74 @@ jobs:
       - destroy-environment
       - revert-migrations
 
-  deploy-backend:
-    docker:
-      - image: python:3.10.5-alpine3.16
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
-      - attach_workspace:
-          at: ~/tmp
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible
-            apk add --update openssh-server
-            apk add --no-cache tar gzip curl
-            apk add --update nodejs npm
-            apk --no-cache add --virtual builds-deps build-base python3
-            pip install --upgrade pip && pip install --upgrade awscli
-      - run:
-          name: Deploy backend
-          command: |
-            cd backend
-            npm install --legacy-peer-deps
-            npm run build
-            rm -rf node_modules
-            cd ..
-            # Zip Backend Directory
-            tar -C backend -czvf artifact.tar.gz .
-            # mkdir -m 755 .circleci/ansible/roles/deploy/files/
-            cp artifact.tar.gz  .circleci/ansible/roles/deploy/files/
-            cd .circleci/ansible
-            ansible-playbook -i ~/tmp/project/.circleci/ansible/inventory.txt deploy-backend.yml
   # deploy-backend:
   #   docker:
-  #     - image: cimg/base:stable
+  #     - image: python:3.10.5-alpine3.16
   #   steps:
   #     - checkout
-  #     - install_awscli
-  #     - install_ansible
-  #     - install_nodejs
   #     - add_ssh_keys:
   #         fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
   #     - attach_workspace:
-  #         at: ~/
-  #     - restore_cache:
-  #         keys: [backend-deps]
+  #         at: ~/tmp
   #     - run:
   #         name: Install dependencies
   #         command: |
-  #           cd backend
-  #           npm install
-  #     - run:
-  #         name: Package Backend
-  #         command: |
-  #           cd backend
-  #           npm run build
-  #           tar -czf artifact.tar.gz dist/* package*
-  #           cd ..
-  #           cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+  #           apk add --update ansible
+  #           apk add --update openssh-server
+  #           apk add --no-cache tar gzip curl
+  #           apk add --update nodejs npm
+  #           apk --no-cache add --virtual builds-deps build-base python3
+  #           pip install --upgrade pip && pip install --upgrade awscli
   #     - run:
   #         name: Deploy backend
   #         command: |
-  #           export TYPEORM_MIGRATIONS_DIR=./migrations
-  #           export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
-  #           export TYPEORM_MIGRATIONS=./migrations/*.ts
+  #           cd backend
+  #           npm install --legacy-peer-deps
+  #           npm run build
+  #           rm -rf node_modules
+  #           cd ..
+  #           # Zip Backend Directory
+  #           tar -C backend -czvf artifact.tar.gz .
+  #           mkdir -m 755 .circleci/ansible/roles/deploy/files/
+  #           cp artifact.tar.gz  .circleci/ansible/roles/deploy/files/
   #           cd .circleci/ansible
-  #           cat inventory.txt
-  #           ansible-playbook -i inventory.txt deploy-backend.yml
+  #           ansible-playbook -i ~/tmp/project/.circleci/ansible/inventory.txt deploy-backend.yml
+  deploy-backend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_awscli
+      - install_ansible
+      - install_nodejs
+      - add_ssh_keys:
+          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backend-deps]
+      - run:
+          name: Install dependencies
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Package Backend
+          command: |
+            cd backend
+            npm run build
+            tar -czf artifact.tar.gz dist/* package*
+            cd ..
+            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+      - run:
+          name: Deploy backend
+          command: |
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
       - revert-migrations
 
