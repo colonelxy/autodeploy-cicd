@@ -278,38 +278,39 @@ jobs:
 
 
   deploy-frontend:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Install sudo, tar, gzip, curl
-          command: |
-            yum install sudo -y
-            yum -y install tar gzip
-            yum makecache
-            yum install curl.x86_64
-      - run:
-          name: Install Nodejs and NPM
-          command: |
-            yum install -y gcc-c++ make
-            curl -sL https://rpm.nodesource.com/setup_13.x |sudo -E bash -
-            sudo yum install -y nodejs
-      - attach_workspace:
-          at: ~/tmp
     # docker:
-    #   - image: cimg/base:stable
+    #   - image: amazon/aws-cli
     # steps:
     #   - checkout
-    #   - install_awscli
-    #   - install_nodejs
-    #   - restore_cache:
-    #       keys: [frontend-deps]
     #   - run:
-    #       name: Install dependencies
+    #       name: Install sudo, tar, gzip, curl
     #       command: |
-    #         cd frontend
-    #         npm install
+    #         yum install sudo -y
+    #         yum -y install tar gzip
+    #         yum makecache
+    #         yum install curl.x86_64
+    #   - run:
+    #       name: Install Nodejs and NPM
+    #       command: |
+    #         yum install -y gcc-c++ make
+    #         curl -sL https://rpm.nodesource.com/setup_13.x |sudo -E bash -
+    #         sudo yum install -y nodejs
+      
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_awscli
+      - install_nodejs
+      - restore_cache:
+          keys: [frontend-deps]
+      - attach_workspace:
+          at: ~/tmp
+      - run:
+          name: Install dependencies
+          command: |
+            cd frontend
+            npm install
       - run:
           name: Get backend url
           command: |
@@ -356,7 +357,7 @@ jobs:
             cd ..
             # Zip Backend Directory
             tar -C backend -czvf artifact.tar.gz .
-            mkdir -m 755 .circleci/ansible/roles/deploy/files/
+            # mkdir -m 755 .circleci/ansible/roles/deploy/files/
             cp artifact.tar.gz  .circleci/ansible/roles/deploy/files/
             cd .circleci/ansible
             ansible-playbook -i ~/tmp/project/.circleci/ansible/inventory.txt deploy-backend.yml
