@@ -211,15 +211,22 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout
-      - install_awscli
-      - install_ansible
-      - add_ssh_keys:
-          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
+      # - install_awscli
+      # - install_ansible
       - attach_workspace:
           at: ~/
+      - add_ssh_keys:
+          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+            apk add --update openssh-server
+            apk --no-cache add --virtual builds-deps build-base python3
+            pip install --upgrade pip && pip install --upgrade awscli
       - run:
           name: Configure Server
           command: |
@@ -237,6 +244,11 @@ jobs:
       - install_nodejs
       - restore_cache:
           keys: [backend-deps]
+      - run:
+          name: Update dependencies
+          command: |
+            sudo apt update
+            sudo apt upgrade -y
       - run:
           name: Run migrations
           command: |
@@ -298,18 +310,20 @@ jobs:
       - install_awscli
       - install_ansible
       - install_nodejs
-      - restore_cache:
-          keys: [backend-deps]
-      - add_ssh_keys:
-          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
-      - attach_workspace:
-          at: ~/
-      
       - run:
           name: Install dependencies
           command: |
             cd backend
+            npm install --legacy-peer-deps
             npm install
+            
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backend-deps]
+      - add_ssh_keys:
+          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"] 
+      
       - run:
           name: Package Backend
           command: |
