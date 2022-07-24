@@ -10,6 +10,18 @@ commands:
           channel: cicd3
           template: basic_fail_1
 
+  install_nodejs:
+    description: Install Node.js 13
+    steps:
+      - run:
+          name: Install Node.js 13
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+            sudo apt install -y nodejs
+
+            sudo npm install -g n
+            sudo n 13.8.0
+            
   install_awscli:
     description: Install AWS CLI v2
     steps:
