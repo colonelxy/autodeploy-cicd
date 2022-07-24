@@ -21,7 +21,7 @@ commands:
 
             sudo npm install -g n
             sudo n 13.8.0
-            
+
   install_awscli:
     description: Install AWS CLI v2
     steps:
@@ -242,7 +242,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/node:16.10.0
     steps:
       - checkout
       - install_awscli
