@@ -214,19 +214,19 @@ jobs:
       - image: cimg/python:3.10
     steps:
       - checkout
-      # - install_awscli
-      # - install_ansible
+      - install_awscli
+      - install_ansible
       - attach_workspace:
           at: ~/
       - add_ssh_keys:
           fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible
-            apk add --update openssh-server
-            apk --no-cache add --virtual builds-deps build-base python3
-            pip install --upgrade pip && pip install --upgrade awscli
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       apk add --update ansible
+      #       apk add --update openssh-server
+      #       apk --no-cache add --virtual builds-deps build-base python3
+      #       pip install --upgrade pip && pip install --upgrade awscli
       - run:
           name: Configure Server
           command: |
@@ -315,6 +315,8 @@ jobs:
           command: |
             cd backend
             npm install --legacy-peer-deps
+            npm install -g npm-install-peers
+            npm-install-peers
             npm install
             
       - attach_workspace:
