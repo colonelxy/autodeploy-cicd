@@ -230,7 +230,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
@@ -258,7 +258,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
@@ -292,18 +292,19 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
       - install_ansible
       - install_nodejs
+      - restore_cache:
+          keys: [backend-deps]
       - add_ssh_keys:
           fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
       - attach_workspace:
           at: ~/
-      - restore_cache:
-          keys: [backend-deps]
+      
       - run:
           name: Install dependencies
           command: |
