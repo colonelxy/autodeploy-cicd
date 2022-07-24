@@ -214,7 +214,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      # - install_awscli
+      - install_awscli
       - install_ansible
       - add_ssh_keys:
           fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
@@ -234,15 +234,15 @@ jobs:
     steps:
       - checkout
       - install_awscli
-      # - install_nodejs
-      # - restore_cache:
-      #     keys: [backend-deps]
+      - install_nodejs
+      - restore_cache:
+          keys: [backend-deps]
       - run:
           name: Run migrations
           command: |
             cd backend
             npm install
-            npm audit fix --force
+            # npm audit fix --force
             npm run migrations > migrations_dump.txt
             # cat migrations_dump.txt
       - run:
