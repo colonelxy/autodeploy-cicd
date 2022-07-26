@@ -7,7 +7,7 @@ commands:
     steps:
       - slack/notify:
           event: fail
-          channel: cicd3
+          channel: cicd_pipeline
           template: basic_fail_1
 
   install_nodejs:
@@ -39,9 +39,13 @@ commands:
           name: Install Ansible
           command: |
             sudo apt update
-            sudo apt install software-properties-common -y
-            sudo add-apt-repository --yes --update ppa:ansible/ansible
-            sudo apt install ansible -y
+            sudo apt install -y python3 python3-pip
+            python3 -m pip install --user ansible
+
+            # sudo apt update
+            # sudo apt install software-properties-common -y
+            # sudo add-apt-repository --yes --update ppa:ansible/ansible
+            # sudo apt install ansible -y
 
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -229,7 +233,7 @@ jobs:
       - install_awscli
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
+          fingerprints: ["6e:28:98:81:87:54:bd:7f:88:f1:7c:0d:cb:33:f4:ef"]
       - attach_workspace:
           at: ~/
       - run:
@@ -313,7 +317,7 @@ jobs:
       - install_ansible
       - install_nodejs
       - add_ssh_keys:
-          fingerprints: ["c9:cb:c9:26:16:da:2e:d5:72:c8:f9:60:65:3b:77:9d"]
+          fingerprints: ["6e:28:98:81:87:54:bd:7f:88:f1:7c:0d:cb:33:f4:ef"]
       - attach_workspace:
           at: ~/
       - restore_cache:
@@ -438,7 +442,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - slack/notify:
-          channel: cicd3
+          channel: cicd_pipeline
           event: pass
           template: success_tagged_deploy_1            
 
