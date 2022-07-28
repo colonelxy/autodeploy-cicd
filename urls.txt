@@ -1,0 +1,14 @@
+ 1. Github
+https://github.com/colonelxy/project3  -URL01
+
+  2. S3 upblic bucket
+http://udapeople-7952452.s3-website-us-east-1.amazonaws.com/#/employees -[URL02]
+
+  3. Cloudfront
+ http://d1urcxjhvbpzlb.cloudfront.net/#/employees -[URL03]
+
+  4. Backend Instance Status
+ http://44.207.114.158:3030/api/status -[URL04]
+
+  5. Prometheus server
+http://44.202.121.210:9090/targets?search= -[URL05]
