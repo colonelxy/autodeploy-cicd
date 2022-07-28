@@ -43,7 +43,7 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub backend-${ID}
-          Key: Project
+        - Key: Project
           Value: Udapeople
 
   InstanceEIP:
@@ -51,3 +51,5 @@ Resources:
     Properties:
       Domain: vpc
       InstanceId: !Ref EC2Instance
+ 
+        
